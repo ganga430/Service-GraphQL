@@ -1,0 +1,74 @@
+
+data "external" "{{name}}_zip" {
+  program = ["./zip.sh", "{{name}}.zip", "../services/{{name}}"]
+}
+
+resource "aws_lambda_function" "{{name}}" {
+  depends_on       = [data.external.{{name}}_zip]
+  filename         = "${path.module}/{{name}}.zip"
+  function_name    = "services-gql-{{name}}-{{env}}"
+  handler          = "{{handler}}"
+  role             = "arn:aws:iam::{{awsAccountId}}:role/{{awsLambdaExecutionRole}}"
+  runtime          = "nodejs14.x"
+  source_code_hash = data.external.{{name}}_zip.result.output_base64sha256
+  timeout          = 30
+  memory_size      = 256
+  publish          = true
+  environment {
+    variables = {
+      {{#each envVars}}
+      {{{@key}}} = "{{{this}}}"
+      {{/each}}
+      SERVICE_NAME = "services-gql-{{name}}-{{env}}"
+      VERSION = "{{gwVersion}}"
+    }
+  }
+  vpc_config {
+    subnet_ids         = {{{subnets}}}
+    security_group_ids = {{{securityGroups}}}
+  }
+  tags = {
+    gwVersion = "{{gwVersion}}"
+    Name = "services-gql-{{name}}-{{env}}"
+    application = "gql"
+    environment = "{{env}}"
+    businessSponsor = "Hemant Salvi"
+  }
+}
+
+resource "aws_lambda_alias" "{{name}}_alias" {
+  name             = "live"
+  function_name    = aws_lambda_function.{{name}}.arn
+  function_version = aws_lambda_function.{{name}}.version
+}
+
+resource "aws_lambda_permission" "{{name}}_apigw_permission" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.{{name}}.arn
+  principal     = "apigateway.amazonaws.com"
+  qualifier     = aws_lambda_alias.{{name}}_alias.name
+  source_arn    = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*/*/*"
+}
+
+resource "aws_api_gateway_resource" "gql-{{name}}-resource" {
+  rest_api_id = aws_api_gateway_rest_api.GQLServices-{{lowerCase env}}.id
+  parent_id   = aws_api_gateway_rest_api.GQLServices-{{lowerCase env}}.root_resource_id
+  path_part   = "{{name}}-graphql"
+}
+
+resource "aws_api_gateway_method" "gql-{{name}}-method" {
+  rest_api_id   = aws_api_gateway_rest_api.GQLServices-{{lowerCase env}}.id
+  resource_id   = aws_api_gateway_resource.gql-{{name}}-resource.id
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "gql-{{name}}-integration" {
+  rest_api_id             = aws_api_gateway_rest_api.GQLServices-{{lowerCase env}}.id
+  resource_id             = aws_api_gateway_resource.gql-{{name}}-resource.id
+  http_method             = aws_api_gateway_method.gql-{{name}}-method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = "arn:aws:apigateway:${data.aws_region.current.name}:lambda:path/2015-03-31/functions/arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:$${stageVariables.{{camelCase name}}LambdaName}/invocations"
+}

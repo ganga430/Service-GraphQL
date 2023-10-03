@@ -1,0 +1,18 @@
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+data "aws_ssm_parameter" "GSE_SUBNETS" {
+  name = "{{ssmPrefix}}/GSE_SUBNETS"
+}
+
+data "aws_ssm_parameter" "GSE_SECURITY_GROUPS" {
+  name = "{{ssmPrefix}}/GSE_SECURITY_GROUPS"
+}
+
+terraform {
+  backend "s3" {}
+}
+
+variable "memory_size" {
+  default = "128"
+}

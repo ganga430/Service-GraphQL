@@ -1,0 +1,59 @@
+{
+  "family": "services-gql-gw-{{env}}",
+  "executionRoleArn": "arn:aws:iam::{{awsAccountId}}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::{{awsAccountId}}:role/{{awsTaskRoleArn}}",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "apollo-gateway",
+      "image": "node:14-alpine",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "command": ["dist/index"],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "secretOptions": null,
+        "options": {
+          "awslogs-group": "/ecs/services-gql-gw-{{env}}",
+          "awslogs-region": "{{awsRegion}}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "environment": [
+        {
+          "name": "VERSION",
+          "value": "{{gwVersion}}"
+        },
+      {{#each envVars}}
+        {
+          "name": "{{{@key}}}",
+          "value": "{{{this}}}"
+        },
+      {{/each}}
+      {{#each lambdaServices}}
+        {
+          "name": "{{constantCase this}}_URL",
+          "value": "{{../gatewayBaseUrl}}/{{lowerCase ../env}}/{{dashCase this}}-graphql"
+        }{{#unless @last}},{{/unless}}
+      {{/each}}
+      ],
+      "secrets": [
+      {{#if enableApolloStudio}}
+        {
+          "name": "APOLLO_KEY",
+          "valueFrom": "arn:aws:ssm:{{awsRegion}}:{{awsAccountId}}:parameter{{ssmPrefix}}/APOLLO_KEY"
+        }
+      {{/if}}
+      ]
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024"
+}
