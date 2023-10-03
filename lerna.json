@@ -1,0 +1,14 @@
+{
+  "packages": ["services/*", "packages/*"],
+  "version": "independent",
+  "hoist": false,
+  "strict": true,
+  "command": {
+    "publish": {
+      "conventionalCommits": true,
+      "registry": "https://npm.pkg.github.com/",
+      "createRelease": "github",
+      "message": "chore(release): publish new version\n\n[ci skip]"
+    }
+  }
+}

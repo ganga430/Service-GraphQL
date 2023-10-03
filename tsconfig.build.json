@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "composite": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./packages/gql-types" },
+    { "path": "./packages/gql-core" },
+    { "path": "./packages/gql-common-datasources" },
+    { "path": "./packages/gql-testing-utils" },
+    { "path": "./services/room-check-in" },
+    { "path": "./services/room-booking" },
+    { "path": "./services/identity" },
+    { "path": "./services/static-content" },
+    { "path": "./services/itinerary" },
+    { "path": "./services/cart" },
+    { "path": "./services/customer" },
+    { "path": "./services/gateway" },
+    { "path": "./services/mgm-room-booking" },
+    { "path": "./services/mgm-show-booking" },
+    { "path": "./services/mgm-dining-booking" },
+    { "path": "./services/mgm-booking-reservation" },
+    { "path": "./services/payment" },
+    { "path": "./services/customer-insight" },
+    { "path": "./services/sre" },
+    { "path": "./services/mgm-booking-reservation" },
+    { "path": "./services/recommendation" },
+    { "path": "./services/loyalty" },
+    { "path": "./services/cs-content" },
+    { "path": "./services/search" },
+    { "path": "./services/product-information-management" }
+  ]
+}

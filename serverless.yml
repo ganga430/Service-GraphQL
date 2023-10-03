@@ -1,0 +1,142 @@
+plugins:
+  - serverless-offline
+
+service: services-gql
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-west-2
+
+functions:
+  customer:
+    handler: services/customer/dist/index.handler
+    events:
+      - http:
+          path: customer
+          method: ANY
+
+  itinerary:
+    handler: services/itinerary/dist/index.handler
+    events:
+      - http:
+          path: itinerary
+          method: ANY
+
+  cart:
+    handler: services/cart/dist/index.handler
+    events:
+      - http:
+          path: cart
+          method: ANY
+
+  identity:
+    handler: services/identity/dist/index.handler
+    events:
+      - http:
+          path: identity
+          method: ANY
+
+  room-booking:
+    handler: services/room-booking/dist/index.handler
+    events:
+      - http:
+          path: room-booking
+          method: ANY
+
+  room-check-in:
+    handler: services/room-check-in/dist/index.handler
+    events:
+      - http:
+          path: room-check-in
+          method: ANY
+
+  static-content:
+    handler: services/static-content/dist/index.handler
+    events:
+      - http:
+          path: static-content
+          method: ANY
+
+  mgm-room-booking:
+    handler: services/mgm-room-booking/dist/index.handler
+    events:
+      - http:
+          path: mgm-room-booking
+          method: ANY
+
+  mgm-show-booking:
+    handler: services/mgm-show-booking/dist/index.handler
+    events:
+      - http:
+          path: mgm-show-booking
+          method: ANY
+
+  mgm-dining-booking:
+    handler: services/mgm-dining-booking/dist/index.handler
+    events:
+      - http:
+          path: mgm-dining-booking
+          method: ANY
+
+  payment:
+    handler: services/payment/dist/index.handler
+    events:
+      - http:
+          path: payment
+          method: ANY
+
+  customer-insight:
+    handler: services/customer-insight/dist/index.handler
+    events:
+      - http:
+          path: customer-insight
+          method: ANY
+
+  sre:
+    handler: services/sre/dist/index.handler
+    events:
+      - http:
+          path: sre
+          method: ANY
+
+  product-information-management:
+    handler: services/product-information-management/dist/index.handler
+    events:
+      - http:
+          path: product-information-management
+          method: ANY
+
+  mgm-booking-reservation:
+    handler: services/mgm-booking-reservation/dist/index.handler
+    events:
+      - http:
+          path: mgm-booking-reservation
+          method: ANY
+
+  recommendation:
+    handler: services/recommendation/dist/index.handler
+    events:
+      - http:
+          path: recommendation
+          method: ANY
+
+  loyalty:
+    handler: services/loyalty/dist/index.handler
+    events:
+      - http:
+          path: loyalty
+          method: ANY
+  cs-content:
+    handler: services/cs-content/dist/index.handler
+    events:
+      - http:
+          path: cs-content
+          method: ANY
+  search:
+    handler: services/search/dist/index.handler
+    events:
+      - http:
+          path: search
+          method: ANY

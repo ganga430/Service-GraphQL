@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
+  "files": [],
+  "include": [],
+  "references": [{ "path": "./tsconfig.build.json" }]
+}
